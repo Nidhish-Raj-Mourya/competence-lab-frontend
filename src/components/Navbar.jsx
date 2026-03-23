@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const styles = {
   nav: {
@@ -35,10 +36,14 @@ const styles = {
     borderRadius: '8px',
     fontSize: '14px',
     fontWeight: '500',
+    cursor: 'pointer',
   }
 }
 
 function Navbar() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
   return (
     <nav style={styles.nav}>
       <div style={styles.logo}>Competence Lab</div>
@@ -46,9 +51,17 @@ function Navbar() {
         <li><Link to="/" style={styles.link}>Home</Link></li>
         <li><Link to="/roadmap" style={styles.link}>Roadmap</Link></li>
         <li><Link to="/tests" style={styles.link}>Tests</Link></li>
-        <li><Link to="/login" style={styles.link}>Login</Link></li>
+        {!user && <li><Link to="/login" style={styles.link}>Login</Link></li>}
       </ul>
-      <button style={styles.btn}>Get Started</button>
+      {user ? (
+        <button style={styles.btn} onClick={() => navigate('/dashboard')}>
+          👤 {user.name?.split(' ')[0]}
+        </button>
+      ) : (
+        <button style={styles.btn} onClick={() => navigate('/register')}>
+          Get Started
+        </button>
+      )}
     </nav>
   )
 }
